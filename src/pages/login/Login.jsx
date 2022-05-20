@@ -23,8 +23,13 @@ export const Login = () => {
         dispatch({ type: "LOGIN_START" });
         try {
             const response = await axios.post("/auth/login", credentials);
-            dispatch({ type: "LOGIN_SUCCESS", payload: response.data });
-            navigate("/");
+
+            if (response?.data.isAdmin) {
+                dispatch({ type: "LOGIN_SUCCESS", payload: response.data.details });
+                navigate("/");
+            } else {
+                dispatch({ type: "LOGIN_FAILURE", payload: { message: "Your are not allowed!" } });
+            }
         } catch (error) {
             dispatch({ type: "LOGIN_FAILURE", payload: error.response.data });
         }
